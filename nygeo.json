@@ -1,4 +1,3 @@
-var neighborhoods_json = 
 {
     "type": "FeatureCollection",
     "features": [

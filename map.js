@@ -12,24 +12,24 @@ d3.json('nygeo.json').then(function(data) {
 
     d3.csv('data.csv').then(function(pointData) {
         var albersProjection = d3.geoAlbers()
-            .scale( 190000 )
-            .rotate( [71.057,0] )
-            .center( [0, 42.313] )
+            .scale(70000)
+            .rotate([74,0])
+            .center([0, 40.7128])
             .translate( [width/2,height/2] );
 
         var geoPath = d3.geoPath()
-            .projection( albersProjection );
+            .projection(albersProjection);
 
-        g.selectAll( "path" )
-            .data(data.features )
+        g.selectAll("path")
+            .data(data.features)
             .enter()
-            .append( "path" )
-            //.attr( "fill", "#ccc" )
-            //.attr( "stroke", "#333")
-            .attr( "d", geoPath );
+            .append("path")
+            .attr("fill", "#ccc")
+            .attr("stroke", "#333")
+            .attr("d", geoPath);
 
         svg.append('text')
-            .attr('x', 400)
+            .attr('x', 100)
             .attr('y', 100)
             .style('font-size', '16pt')
             .text("Airbnb Listings in NYC")
@@ -37,18 +37,22 @@ d3.json('nygeo.json').then(function(data) {
     
         // plots circles on the map
        function plotData(pointData) {
-            svg.selectAll('circle').remove();
-
             g.selectAll('.circle')
                 .data(pointData)
                 .enter()
                 .append('circle')
-                    .attr("r", 6)
-                    .attr('stroke', 'grey')
+                    .attr('cx', function(d) { 
+                        let scaledPoints = albersProjection([d['longitude'], d['latitude']])
+                        return scaledPoints[0];
+                    })
+                    .attr('cy', function(d) {
+                        let scaledPoints = albersProjection([d['longitude'], d['latitude']])
+                        return scaledPoints[1];
+                    })
+                    .attr('r', 6)
+                    .attr('stroke', 'black')
                     .attr('fill', '#A40034')
-                    .attr('opacity', .5)
-                    .attr('cx', function(d) { return(projection([d.longitude, d.latitude])[0]); }) 
-                    .attr('cy', function(d) { return(projection([d.longitude, d.latitude])[1]) })
+                    .attr('opacity', 1)
                 .on('click', function(){
                     d3.select(this).remove();
                 }); 
